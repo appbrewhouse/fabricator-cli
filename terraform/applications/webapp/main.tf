@@ -1,12 +1,16 @@
+locals {
+  app_type = "webapp"
+}
+
 module "webapp_amplify" {
   source = "../../modules/amplify"
 
+  app_name              = var.app_name
+  environment           = var.environment
+  app_type              = local.app_type
   amplify_app_name      = "${var.app_name}-${var.environment}-amplify-webapp"
   github_repo_url       = var.github_repo_url
   git_token             = var.git_token
-  app_type              = "webapp"
-  app_name              = var.app_name
-  environment           = var.environment
   api_dns_name          = var.api_dns_name
   branch_name           = var.branch_name
   amplify_app_framework = var.amplify_app_framework

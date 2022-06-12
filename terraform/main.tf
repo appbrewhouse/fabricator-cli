@@ -44,19 +44,37 @@ module "routing" {
   environment = var.environment
 }
 
+# AWS VPC
+module "aws_vpc" {
+  source = "./modules/vpc"
+
+  app_name                               = var.app_name
+  environment                            = var.environment
+
+  vpc_cidr_block                         = var.vpc_cidr_block
+  vpc_availability_zones                 = var.vpc_availability_zones
+  vpc_public_subnets                     = var.vpc_public_subnets
+  vpc_private_subnets                    = var.vpc_private_subnets
+  vpc_database_subnets                   = var.vpc_database_subnets
+  vpc_create_database_subnet_group       = var.vpc_create_database_subnet_group
+  vpc_create_database_subnet_route_table = var.vpc_create_database_subnet_route_table
+  vpc_enable_nat_gateway                 = var.vpc_enable_nat_gateway
+  vpc_single_nat_gateway                 = var.vpc_single_nat_gateway
+}
+
 # AWS resources
 module "webapp_aws" {
   source = "./applications/webapp"
 
-  depends_on            = [module.webapp_github]
-  github_repo_url       = module.webapp_github.github_repo_url
-  git_token             = var.git_token
-  app_name              = var.app_name
-  environment           = var.environment
-  api_dns_name          = var.api_dns_name
-  branch_name           = var.branch_name
-  amplify_app_framework = var.amplify_app_framework
-  amplify_app_stage     = var.amplify_app_stage
-  domain_name           = var.domain_name
-  sub_domain            = var.webapp_sub_domain
+  depends_on                             = [module.webapp_github, module.aws_vpc]
+  github_repo_url                        = module.webapp_github.github_repo_url
+  git_token                              = var.git_token
+  app_name                               = var.app_name
+  environment                            = var.environment
+  api_dns_name                           = var.api_dns_name
+  branch_name                            = var.branch_name
+  amplify_app_framework                  = var.amplify_app_framework
+  amplify_app_stage                      = var.amplify_app_stage
+  domain_name                            = var.domain_name
+  sub_domain                             = var.webapp_sub_domain
 }
