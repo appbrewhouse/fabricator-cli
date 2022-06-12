@@ -27,3 +27,31 @@ variable "webapp_collaborators_usernames" {
 variable "backend_collaborators_usernames" {
   type = list(string)
 }
+
+variable "api_dns_name" {
+  type = string
+}
+
+variable "branch_name" {
+  type = string
+}
+
+variable "amplify_app_framework" {
+  type = string
+}
+
+variable "amplify_app_stage" {
+  type = string
+}
+
+variable "domain_name" {
+  type = string
+}
+
+variable "webapp_sub_domain" {
+  type = list(string)
+}
+
+variable "staging_branch_name" {
+  type = string
+}

@@ -57,3 +57,10 @@ resource "github_repository_project" "project" {
   name       = "A github project for ${var.repo_name} repository"
   repository = github_repository.repo.name
 }
+
+resource "github_branch" "staging" {
+  repository = github_repository.repo.name
+  branch     = var.staging_branch_name
+
+  source_branch = github_repository.repo.branches[0].name
+}

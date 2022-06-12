@@ -29,3 +29,7 @@ variable "github_template_owner_name" {
 variable "github_template_repository_name" {
   type = string
 }
+
+variable "staging_branch_name" {
+  type = string
+}
