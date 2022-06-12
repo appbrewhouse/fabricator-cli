@@ -1,0 +1,7 @@
+aws_region                      = "us-east-1"
+environment                     = "production"
+git_token                       = "GITHUB_PERSONAL_ACCESS_TOKEN"
+org_name                        = "GITHUB_ORG_NAME"
+app_name                        = "PROJECT_NAME"
+webapp_collaborators_usernames  = ["GITHUB_USERNAME_1", "GITHUB_USERNAME_2"]
+backend_collaborators_usernames = ["GITHUB_USERNAME_1"]
