@@ -24,6 +24,10 @@ variable "webapp_collaborators_usernames" {
   type = list(string)
 }
 
+variable "staticfe_collaborators_usernames" {
+  type = list(string)
+}
+
 variable "backend_collaborators_usernames" {
   type = list(string)
 }
@@ -33,6 +37,10 @@ variable "api_dns_name" {
 }
 
 variable "webapp_dns_name" {
+  type = string
+}
+
+variable "staticfe_dns_name" {
   type = string
 }
 
@@ -53,6 +61,10 @@ variable "domain_name" {
 }
 
 variable "webapp_sub_domain" {
+  type = list(string)
+}
+
+variable "staticfe_sub_domain" {
   type = list(string)
 }
 

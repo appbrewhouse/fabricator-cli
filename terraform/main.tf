@@ -3,8 +3,9 @@ provider "aws" {
 }
 
 locals {
-  webapp_repo_name  = "${var.app_name}-webapp"
-  backend_repo_name = "${var.app_name}-backend"
+  webapp_repo_name   = "${var.app_name}-webapp"
+  backend_repo_name  = "${var.app_name}-backend"
+  staticfe_repo_name = "${var.app_name}-staticfe"
 }
 
 # Github
@@ -19,6 +20,20 @@ module "webapp_github" {
   repo_name                       = local.webapp_repo_name
   github_template_owner_name      = "appbrewhouse"
   github_template_repository_name = "fabricator-webapp-react-template"
+  staging_branch_name             = var.staging_branch_name
+}
+
+module "staticfe_github" {
+  source = "./modules/github"
+
+  git_token                       = var.git_token
+  org_name                        = var.org_name
+  app_name                        = var.app_name
+  app_type                        = "staticfe"
+  collaborators_usernames         = var.staticfe_collaborators_usernames
+  repo_name                       = local.staticfe_repo_name
+  github_template_owner_name      = "appbrewhouse"
+  github_template_repository_name = "fabricator-staticfe-gatsby-template"
   staging_branch_name             = var.staging_branch_name
 }
 
@@ -73,13 +88,36 @@ module "aws_alb" {
   acm_certificate_arn = module.routing.acm_certificate_arn
   api_dns_name        = var.api_dns_name
   webapp_dns_name     = var.webapp_dns_name
+  staticfe_dns_name   = var.staticfe_dns_name
 }
 
 # AWS resources
+
+module "staticfe_aws" {
+  source = "./applications/staticfe"
+
+  depends_on            = [module.staticfe_github, module.aws_vpc]
+  github_repo_url       = module.staticfe_github.github_repo_url
+  git_token             = var.git_token
+  app_name              = var.app_name
+  environment           = var.environment
+  api_dns_name          = var.api_dns_name
+  branch_name           = var.branch_name
+  amplify_app_framework = var.amplify_app_framework
+  amplify_app_stage     = var.amplify_app_stage
+  domain_name           = var.domain_name
+  sub_domain            = var.staticfe_sub_domain
+
+  zone_id     = module.routing.domain_zoneid
+  dns_name    = var.staticfe_dns_name
+  lb_dns_name = module.aws_alb.lb_dns_name
+  lb_zone_id  = module.aws_alb.lb_zone_id
+}
+
 module "webapp_aws" {
   source = "./applications/webapp"
 
-  depends_on            = [module.webapp_github, module.aws_vpc]
+  depends_on            = [module.webapp_github, module.aws_vpc, module.staticfe_aws]
   github_repo_url       = module.webapp_github.github_repo_url
   git_token             = var.git_token
   app_name              = var.app_name

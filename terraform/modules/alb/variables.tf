@@ -25,3 +25,7 @@ variable "api_dns_name" {
 variable "webapp_dns_name" {
   type = string
 }
+
+variable "staticfe_dns_name" {
+  type = string
+}

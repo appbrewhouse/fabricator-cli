@@ -81,10 +81,22 @@ module "alb" {
         type         = "fixed-response"
         content_type = "text/plain"
         status_code  = 200
-        message_body = "${var.app_name}-${var.environment}"
+        message_body = "${var.app_name}-${var.environment}-webapp"
       }]
       conditions = [{
         host_headers = [var.webapp_dns_name]
+      }]
+    },
+    {
+      https_listener_index = 0
+      actions = [{
+        type         = "fixed-response"
+        content_type = "text/plain"
+        status_code  = 200
+        message_body = "${var.app_name}-${var.environment}-staticfe"
+      }]
+      conditions = [{
+        host_headers = [var.staticfe_dns_name]
       }]
     },
   ]
