@@ -1,7 +1,73 @@
-aws_region                      = "us-east-1"
-environment                     = "production"
-git_token                       = "GITHUB_PERSONAL_ACCESS_TOKEN"
-org_name                        = "GITHUB_ORG_NAME"
-app_name                        = "PROJECT_NAME"
-webapp_collaborators_usernames  = ["GITHUB_USERNAME_1", "GITHUB_USERNAME_2"]
-backend_collaborators_usernames = ["GITHUB_USERNAME_1"]
+FILE: prod.tfvars
+-----------------
+aws_region  = "us-east-1"
+environment = "prod"
+app_name    = "mynewapp"
+
+# Git
+org_name                         = "fabricator"
+git_token                        = "GIT_SECRET_TOKEN"
+webapp_collaborators_usernames   = ["mynewapp-info"]
+staticfe_collaborators_usernames = ["mynewapp-info"]
+backend_collaborators_usernames  = ["mynewapp-info"]
+staging_branch_name              = "staging"
+branch_name                      = "master"
+
+# AWS
+domain_name           = "mynewapp.com"
+api_dns_name          = "api.mynewapp.com"
+webapp_dns_name       = "app.mynewapp.com"
+staticfe_dns_name     = "mynewapp.com"
+amplify_app_framework = "React"
+amplify_app_stage     = "BETA"
+webapp_sub_domain     = ["app"]
+staticfe_sub_domain   = ["", "www"]
+
+# VPC Variables
+vpc_cidr_block                         = "10.1.0.0/16"
+vpc_availability_zones                 = ["us-east-1a", "us-east-1b"]
+vpc_public_subnets                     = ["10.1.1.0/24", "10.1.2.0/24"]
+vpc_private_subnets                    = ["10.1.11.0/24", "10.1.12.0/24"]
+vpc_database_subnets                   = ["10.1.21.0/24", "10.1.22.0/24"]
+vpc_create_database_subnet_group       = true
+vpc_create_database_subnet_route_table = true
+vpc_enable_nat_gateway                 = true
+vpc_single_nat_gateway                 = true
+
+---------------------------------------------------------------------------------------------------------------
+
+FILE: staging.tfvars
+--------------------
+aws_region  = "us-east-1"
+environment = "staging"
+app_name    = "mynewapp"
+
+# Git
+org_name                         = "fabricator"
+git_token                        = "GIT_SECRET_TOKEN"
+webapp_collaborators_usernames   = ["mynewapp-info"]
+staticfe_collaborators_usernames = ["mynewapp-info"]
+backend_collaborators_usernames  = ["mynewapp-info"]
+staging_branch_name              = "staging"
+branch_name                      = "staging"
+
+# AWS
+domain_name           = "mynewapp.com"
+api_dns_name          = "api-staging.mynewapp.com"
+webapp_dns_name       = "app-staging.mynewapp.com"
+staticfe_dns_name     = "staging.mynewapp.com"
+amplify_app_framework = "React"
+amplify_app_stage     = "BETA"
+webapp_sub_domain     = ["app-staging"]
+staticfe_sub_domain   = ["staging"]
+
+# VPC Variables
+vpc_cidr_block                         = "10.0.0.0/16"
+vpc_availability_zones                 = ["us-east-1a", "us-east-1b"]
+vpc_public_subnets                     = ["10.0.1.0/24", "10.0.2.0/24"]
+vpc_private_subnets                    = ["10.0.11.0/24", "10.0.12.0/24"]
+vpc_database_subnets                   = ["10.0.21.0/24", "10.0.22.0/24"]
+vpc_create_database_subnet_group       = true
+vpc_create_database_subnet_route_table = true
+vpc_enable_nat_gateway                 = true
+vpc_single_nat_gateway                 = true
