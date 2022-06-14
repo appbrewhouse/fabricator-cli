@@ -59,3 +59,12 @@ resource "aws_amplify_domain_association" "domain" {
     prefix      = var.sub_domain[count.index]
   }
 }
+
+resource "aws_amplify_webhook" "branch" {
+  app_id      = aws_amplify_app.app.id
+  branch_name = aws_amplify_branch.branch.branch_name
+  description = "trigger-${var.app_type}-${var.environment}"
+  provisioner "local-exec" {
+    command = "curl -X POST -d {} '${aws_amplify_webhook.branch.url}&operation=startbuild' -H 'Content-Type:application/json'"
+  }
+}

@@ -32,6 +32,10 @@ variable "api_dns_name" {
   type = string
 }
 
+variable "webapp_dns_name" {
+  type = string
+}
+
 variable "branch_name" {
   type = string
 }

@@ -48,8 +48,8 @@ module "routing" {
 module "aws_vpc" {
   source = "./modules/vpc"
 
-  app_name                               = var.app_name
-  environment                            = var.environment
+  app_name    = var.app_name
+  environment = var.environment
 
   vpc_cidr_block                         = var.vpc_cidr_block
   vpc_availability_zones                 = var.vpc_availability_zones
@@ -62,19 +62,37 @@ module "aws_vpc" {
   vpc_single_nat_gateway                 = var.vpc_single_nat_gateway
 }
 
+# AWS ALB
+module "aws_alb" {
+  source = "./modules/alb"
+
+  app_name            = var.app_name
+  environment         = var.environment
+  vpc_id              = module.aws_vpc.vpc_id
+  public_subnets      = module.aws_vpc.public_subnets
+  acm_certificate_arn = module.routing.acm_certificate_arn
+  api_dns_name        = var.api_dns_name
+  webapp_dns_name     = var.webapp_dns_name
+}
+
 # AWS resources
 module "webapp_aws" {
   source = "./applications/webapp"
 
-  depends_on                             = [module.webapp_github, module.aws_vpc]
-  github_repo_url                        = module.webapp_github.github_repo_url
-  git_token                              = var.git_token
-  app_name                               = var.app_name
-  environment                            = var.environment
-  api_dns_name                           = var.api_dns_name
-  branch_name                            = var.branch_name
-  amplify_app_framework                  = var.amplify_app_framework
-  amplify_app_stage                      = var.amplify_app_stage
-  domain_name                            = var.domain_name
-  sub_domain                             = var.webapp_sub_domain
+  depends_on            = [module.webapp_github, module.aws_vpc]
+  github_repo_url       = module.webapp_github.github_repo_url
+  git_token             = var.git_token
+  app_name              = var.app_name
+  environment           = var.environment
+  api_dns_name          = var.api_dns_name
+  branch_name           = var.branch_name
+  amplify_app_framework = var.amplify_app_framework
+  amplify_app_stage     = var.amplify_app_stage
+  domain_name           = var.domain_name
+  sub_domain            = var.webapp_sub_domain
+
+  zone_id     = module.routing.domain_zoneid
+  dns_name    = var.webapp_dns_name
+  lb_dns_name = module.aws_alb.lb_dns_name
+  lb_zone_id  = module.aws_alb.lb_zone_id
 }
