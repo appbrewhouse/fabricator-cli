@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "4.25.0-alpha"
-    }
-  }
-}
-
-provider "github" {
-  token = var.git_token
-  owner = var.org_name
-}
 
 # Team
 resource "github_team" "app_team" {
@@ -63,4 +50,13 @@ resource "github_branch" "staging" {
   branch     = var.staging_branch_name
 
   source_branch = github_repository.repo.branches[0].name
+}
+
+resource "github_actions_secret" "secrets" {
+  repository       = github_repository.repo.name
+
+  count = length(var.secrets)
+
+  secret_name       = var.secrets[count.index].key
+  plaintext_value   = var.secrets[count.index].secret
 }

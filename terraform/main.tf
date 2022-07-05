@@ -2,16 +2,38 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "github" {
+  owner = var.org_name
+}
+
 locals {
   webapp_repo_name   = "${var.app_name}-webapp"
   backend_repo_name  = "${var.app_name}-backend"
   staticfe_repo_name = "${var.app_name}-staticfe"
+
+  // ECR
+  ecr_repo_name = "${var.app_name}-ecr-backend"
+}
+
+# AWS Access Keys
+
+module "aws_iam_data" {
+  source = "./modules/iam"
+}
+
+# AWS ECR
+
+module "backend_ecr" {
+  source = "./modules/ecr"
+
+  ecr_repo_name = local.ecr_repo_name
 }
 
 # Github
 module "webapp_github" {
   source = "./modules/github"
 
+  depends_on                      = [module.aws_iam_data]
   git_token                       = var.git_token
   org_name                        = var.org_name
   app_name                        = var.app_name
@@ -21,11 +43,26 @@ module "webapp_github" {
   github_template_owner_name      = "appbrewhouse"
   github_template_repository_name = "fabricator-webapp-react-template"
   staging_branch_name             = var.staging_branch_name
+  secrets = [
+    {
+      key    = "AWS_ACCESS_KEY_ID",
+      secret = module.aws_iam_data.iam_access_id
+    },
+    {
+      key    = "AWS_SECRET_ACCESS_KEY",
+      secret = module.aws_iam_data.iam_access_secret
+    },
+    {
+      key    = "AWS_DEFAULT_REGION",
+      secret = var.aws_region
+    }
+  ]
 }
 
 module "staticfe_github" {
   source = "./modules/github"
 
+  depends_on                      = [module.aws_iam_data]
   git_token                       = var.git_token
   org_name                        = var.org_name
   app_name                        = var.app_name
@@ -35,11 +72,26 @@ module "staticfe_github" {
   github_template_owner_name      = "appbrewhouse"
   github_template_repository_name = "fabricator-staticfe-gatsby-template"
   staging_branch_name             = var.staging_branch_name
+  secrets = [
+    {
+      key    = "AWS_ACCESS_KEY_ID",
+      secret = module.aws_iam_data.iam_access_id
+    },
+    {
+      key    = "AWS_SECRET_ACCESS_KEY",
+      secret = module.aws_iam_data.iam_access_secret
+    },
+    {
+      key    = "AWS_DEFAULT_REGION",
+      secret = var.aws_region
+    }
+  ]
 }
 
 module "backend_github" {
   source = "./modules/github"
 
+  depends_on                      = [module.aws_iam_data, module.backend_ecr]
   git_token                       = var.git_token
   org_name                        = var.org_name
   app_name                        = var.app_name
@@ -49,6 +101,24 @@ module "backend_github" {
   github_template_owner_name      = "appbrewhouse"
   github_template_repository_name = "fabricator-backend-node-template"
   staging_branch_name             = var.staging_branch_name
+  secrets = [
+    {
+      key    = "ECR_REPOSITORY_NAME",
+      secret = local.ecr_repo_name
+    },
+    {
+      key    = "AWS_ACCESS_KEY_ID",
+      secret = module.aws_iam_data.iam_access_id
+    },
+    {
+      key    = "AWS_SECRET_ACCESS_KEY",
+      secret = module.aws_iam_data.iam_access_secret
+    },
+    {
+      key    = "AWS_DEFAULT_REGION",
+      secret = var.aws_region
+    }
+  ]
 }
 
 # AWS Routing
@@ -134,3 +204,11 @@ module "webapp_aws" {
   lb_dns_name = module.aws_alb.lb_dns_name
   lb_zone_id  = module.aws_alb.lb_zone_id
 }
+
+# module "backend_aws" {
+#   source = "./applications/backend"
+
+#   depends_on    = [module.backend_github, module.aws_vpc]
+#   app_name      = var.app_name
+#   environment   = var.environment
+# }

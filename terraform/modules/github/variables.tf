@@ -33,3 +33,7 @@ variable "github_template_repository_name" {
 variable "staging_branch_name" {
   type = string
 }
+
+variable "secrets" {
+  type = list(map(string))
+}
