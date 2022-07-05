@@ -8,6 +8,16 @@ variable "environment" {
   type        = string
 }
 
+variable "docker_username" {
+  description = "DockerHub username"
+  type        = string
+}
+
+variable "docker_password" {
+  description = "DockerHub password"
+  type        = string
+}
+
 variable "git_token" {
   type = string
 }

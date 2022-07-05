@@ -10,23 +10,12 @@ locals {
   webapp_repo_name   = "${var.app_name}-webapp"
   backend_repo_name  = "${var.app_name}-backend"
   staticfe_repo_name = "${var.app_name}-staticfe"
-
-  // ECR
-  ecr_repo_name = "${var.app_name}-ecr-backend"
 }
 
 # AWS Access Keys
 
 module "aws_iam_data" {
   source = "./modules/iam"
-}
-
-# AWS ECR
-
-module "backend_ecr" {
-  source = "./modules/ecr"
-
-  ecr_repo_name = local.ecr_repo_name
 }
 
 # Github
@@ -91,7 +80,7 @@ module "staticfe_github" {
 module "backend_github" {
   source = "./modules/github"
 
-  depends_on                      = [module.aws_iam_data, module.backend_ecr]
+  depends_on                      = [module.aws_iam_data]
   git_token                       = var.git_token
   org_name                        = var.org_name
   app_name                        = var.app_name
@@ -103,10 +92,6 @@ module "backend_github" {
   staging_branch_name             = var.staging_branch_name
   secrets = [
     {
-      key    = "ECR_REPOSITORY_NAME",
-      secret = local.ecr_repo_name
-    },
-    {
       key    = "AWS_ACCESS_KEY_ID",
       secret = module.aws_iam_data.iam_access_id
     },
@@ -117,6 +102,14 @@ module "backend_github" {
     {
       key    = "AWS_DEFAULT_REGION",
       secret = var.aws_region
+    },
+    {
+      key    = "DOCKER_USERNAME",
+      secret = var.docker_username
+    },
+    {
+      key    = "DOCKER_PASSWORD",
+      secret = var.docker_password
     }
   ]
 }
