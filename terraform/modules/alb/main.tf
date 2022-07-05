@@ -106,7 +106,7 @@ module "alb" {
     {
       name_prefix          = "api-"
       backend_protocol     = "HTTP"
-      backend_port         = 8080
+      backend_port         = 3000
       target_type          = "instance"
       deregistration_delay = 10
       health_check = {

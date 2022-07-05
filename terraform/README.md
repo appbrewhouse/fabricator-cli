@@ -26,3 +26,8 @@ docker pull aws_account_id.dkr.ecr.region.amazonaws.com/hello-world:latest
     * AWS_SECRET_ACCESS_KEY
     * AWS_DEFAULT_REGION
     * ECR_REPOSITORY_NAME
+
+
+# todo
+* check health check url in api
+* fix concurrency issues

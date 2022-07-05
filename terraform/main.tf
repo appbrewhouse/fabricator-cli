@@ -44,6 +44,10 @@ module "webapp_github" {
     {
       key    = "AWS_DEFAULT_REGION",
       secret = var.aws_region
+    },
+    {
+      key    = "APP_NAME",
+      secret = var.app_name
     }
   ]
 }
@@ -73,6 +77,10 @@ module "staticfe_github" {
     {
       key    = "AWS_DEFAULT_REGION",
       secret = var.aws_region
+    },
+    {
+      key    = "APP_NAME",
+      secret = var.app_name
     }
   ]
 }
@@ -110,6 +118,10 @@ module "backend_github" {
     {
       key    = "DOCKER_PASSWORD",
       secret = var.docker_password
+    },
+    {
+      key    = "APP_NAME",
+      secret = var.app_name
     }
   ]
 }
@@ -198,10 +210,25 @@ module "webapp_aws" {
   lb_zone_id  = module.aws_alb.lb_zone_id
 }
 
-# module "backend_aws" {
-#   source = "./applications/backend"
+module "backend_aws" {
+  source = "./applications/backend"
 
-#   depends_on    = [module.backend_github, module.aws_vpc]
-#   app_name      = var.app_name
-#   environment   = var.environment
-# }
+  depends_on             = [module.backend_github, module.aws_vpc]
+  app_name               = var.app_name
+  environment            = var.environment
+  instance_type          = var.instance_type
+  instance_keypair       = var.instance_keypair
+  private_instance_count = var.private_instance_count
+  api_port               = 3000
+
+  vpc_id            = module.aws_vpc.vpc_id
+  vpc_cidr_block    = module.aws_vpc.vpc_cidr_block
+  private_subnets   = module.aws_vpc.private_subnets
+  target_group_arns = module.aws_alb.target_group_arns
+
+  db_name                    = var.db_name
+  db_username                = var.db_username
+  db_password                = var.db_password
+  database_subnets           = var.vpc_database_subnets
+  database_subnet_group_name = module.aws_vpc.database_subnet_group_name
+}

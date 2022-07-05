@@ -128,3 +128,41 @@ variable "vpc_single_nat_gateway" {
   type        = bool
 }
 
+variable "instance_type" {
+  description = "EC2 Instance Type"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "instance_keypair" {
+  description = "AWS EC2 Key pair that need to be associated with EC2 Instance"
+  type        = string
+  default     = "terraform-key"
+}
+
+variable "api_port" {
+  description = "API port"
+  type        = number
+}
+
+variable "private_instance_count" {
+  description = "AWS EC2 Private Instances Count"
+  type        = number
+  default     = 1
+}
+
+variable "db_name" {
+  description = "AWS RDS Database Name"
+  type        = string
+}
+
+variable "db_username" {
+  description = "AWS RDS Database Administrator Username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "AWS RDS Database Administrator Password"
+  type        = string
+  sensitive   = true
+}

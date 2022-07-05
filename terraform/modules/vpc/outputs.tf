@@ -27,3 +27,8 @@ output "azs" {
   description = "A list of availability zones spefified as argument to this module"
   value       = module.vpc.azs
 }
+
+output "database_subnet_group_name" {
+  description = "A list of availability zones spefified as argument to this module"
+  value       = module.vpc.database_subnet_group_name
+}
